@@ -12,6 +12,7 @@ export function useCanvas(socket: Socket | null) {
     removeCard,
     moveCard,
     rotateCard,
+    scaleCard,
     setZIndex,
     updateCursor,
     removeCursor,
@@ -48,6 +49,13 @@ export function useCanvas(socket: Socket | null) {
     );
 
     socket.on(
+      "card:scaled",
+      (data: { id: string; scale: number }) => {
+        scaleCard(data.id, data.scale);
+      }
+    );
+
+    socket.on(
       "card:zindexed",
       (data: { id: string; zIndex: number }) => {
         setZIndex(data.id, data.zIndex);
@@ -71,6 +79,7 @@ export function useCanvas(socket: Socket | null) {
       socket.off("card:removed");
       socket.off("card:moved");
       socket.off("card:rotated");
+      socket.off("card:scaled");
       socket.off("card:zindexed");
       socket.off("cursor:moved");
       socket.off("user:left");
@@ -82,6 +91,7 @@ export function useCanvas(socket: Socket | null) {
     removeCard,
     moveCard,
     rotateCard,
+    scaleCard,
     setZIndex,
     updateCursor,
     removeCursor,
@@ -104,6 +114,16 @@ export function useCanvas(socket: Socket | null) {
     },
     [socket, rotateCard]
   );
+
+  const emitScale = useCallback(
+    (id: string, scale: number) => {
+      if (!socket) return;
+      scaleCard(id, scale);
+      socket.emit("card:scale", { id, scale });
+    },
+    [socket, scaleCard]
+  );
+
 
   const emitAdd = useCallback(
     (cardId: string, x: number, y: number) => {
@@ -131,7 +151,7 @@ export function useCanvas(socket: Socket | null) {
     [socket]
   );
 
-  const emitCursor = useCallback(
+  const emitCursorMove = useCallback(
     (x: number, y: number) => {
       if (!socket) return;
       socket.emit("cursor:move", { x, y });
@@ -142,9 +162,10 @@ export function useCanvas(socket: Socket | null) {
   return {
     emitMove,
     emitRotate,
+    emitScale,
     emitAdd,
     emitRemove,
     emitBringToFront,
-    emitCursor,
+    emitCursorMove,
   };
 }

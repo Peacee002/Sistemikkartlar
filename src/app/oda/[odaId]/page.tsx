@@ -39,10 +39,11 @@ export default function RoomCanvasPage() {
   const {
     emitMove,
     emitRotate,
+    emitScale,
     emitAdd,
     emitRemove,
     emitBringToFront,
-    emitCursor,
+    emitCursorMove,
   } = useCanvas(socket);
 
   const [room, setRoom] = useState<RoomData | null>(null);
@@ -171,10 +172,11 @@ export default function RoomCanvasPage() {
           currentUserId={session.user.id}
           onMove={emitMove}
           onRotate={emitRotate}
+          onScale={emitScale}
           onAdd={emitAdd}
           onRemove={emitRemove}
           onBringToFront={emitBringToFront}
-          onCursorMove={emitCursor}
+          onCursorMove={emitCursorMove}
           connected={connected}
         />
       </div>

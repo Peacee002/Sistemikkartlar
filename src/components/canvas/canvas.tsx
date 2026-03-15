@@ -20,6 +20,7 @@ type CanvasProps = {
   currentUserId: string;
   onMove: (id: string, x: number, y: number) => void;
   onRotate: (id: string, rotation: number) => void;
+  onScale: (id: string, scale: number) => void;
   onAdd: (cardId: string, x: number, y: number) => void;
   onRemove: (id: string) => void;
   onBringToFront: (id: string) => void;
@@ -32,6 +33,7 @@ export function Canvas({
   currentUserId,
   onMove,
   onRotate,
+  onScale,
   onAdd,
   onRemove,
   onBringToFront,
@@ -199,6 +201,7 @@ export function Canvas({
               card={card}
               onMove={onMove}
               onRotate={onRotate}
+              onScale={onScale}
               onBringToFront={onBringToFront}
               onRemove={onRemove}
             />

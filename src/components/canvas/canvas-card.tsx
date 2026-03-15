@@ -2,12 +2,14 @@
 
 import { useCallback, useRef, useState, useEffect } from "react";
 import { RotationHandle } from "./rotation-handle";
+import { ResizeHandle } from "./resize-handle";
 import type { CanvasCardState } from "@/types";
 
 type CanvasCardProps = {
   card: CanvasCardState;
   onMove: (id: string, x: number, y: number) => void;
   onRotate: (id: string, rotation: number) => void;
+  onScale: (id: string, scale: number) => void;
   onBringToFront: (id: string) => void;
   onRemove: (id: string) => void;
 };
@@ -16,14 +18,17 @@ export function CanvasCard({
   card,
   onMove,
   onRotate,
+  onScale,
   onBringToFront,
   onRemove,
 }: CanvasCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
   const isRotating = useRef(false);
+  const isResizing = useRef(false);
   const dragOffset = useRef({ x: 0, y: 0 });
   const [localRotation, setLocalRotation] = useState(card.rotation);
+  const [localScale, setLocalScale] = useState(card.scale || 1);
   const [showContext, setShowContext] = useState(false);
 
   useEffect(() => {
@@ -32,9 +37,19 @@ export function CanvasCard({
     }
   }, [card.rotation]);
 
+  useEffect(() => {
+    if (!isResizing.current) {
+      setLocalScale(card.scale || 1);
+    }
+  }, [card.scale]);
+
   const handlePointerDown = useCallback(
     (e: React.PointerEvent) => {
-      if ((e.target as HTMLElement).closest("[data-rotation-handle]")) return;
+      if (
+        (e.target as HTMLElement).closest("[data-rotation-handle]") ||
+        (e.target as HTMLElement).closest("[data-resize-handle]")
+      )
+        return;
 
       e.stopPropagation();
       e.preventDefault();
@@ -92,23 +107,39 @@ export function CanvasCard({
     [card.id, onRotate]
   );
 
+  const handleResizeStart = useCallback(() => {
+    isResizing.current = true;
+  }, []);
+
+  const handleResize = useCallback((scale: number) => {
+    setLocalScale(scale);
+  }, []);
+
+  const handleResizeEnd = useCallback(
+    (scale: number) => {
+      isResizing.current = false;
+      onScale(card.id, scale);
+    },
+    [card.id, onScale]
+  );
+
   const handleContextMenu = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
-      setShowContext(true);
-      setTimeout(() => setShowContext(false), 3000);
+      setShowContext((prev) => !prev);
     },
     []
   );
 
   const displayRotation = localRotation;
+  const displayScale = localScale;
 
   return (
     <div
       ref={cardRef}
       className="absolute group select-none touch-none"
       style={{
-        transform: `translate(${card.x}px, ${card.y}px) rotate(${displayRotation}deg)`,
+        transform: `translate(${card.x}px, ${card.y}px) rotate(${displayRotation}deg) scale(${displayScale})`,
         zIndex: card.zIndex,
         width: "140px",
       }}
@@ -117,15 +148,28 @@ export function CanvasCard({
       onPointerUp={handlePointerUp}
       onContextMenu={handleContextMenu}
     >
-      <div data-rotation-handle>
-        <RotationHandle
-          cardRef={cardRef}
-          rotation={displayRotation}
-          onRotate={handleRotate}
-          onRotateEnd={handleRotateEnd}
-          onRotateStart={handleRotateStart}
-        />
-      </div>
+      {showContext && (
+        <>
+          <div data-rotation-handle>
+            <RotationHandle
+              cardRef={cardRef}
+              rotation={displayRotation}
+              onRotate={handleRotate}
+              onRotateEnd={handleRotateEnd}
+              onRotateStart={handleRotateStart}
+            />
+          </div>
+          <div data-resize-handle>
+            <ResizeHandle
+              cardRef={cardRef}
+              scale={displayScale}
+              onResize={handleResize}
+              onResizeEnd={handleResizeEnd}
+              onResizeStart={handleResizeStart}
+            />
+          </div>
+        </>
+      )}
 
       <div className="bg-white rounded-lg shadow-lg overflow-hidden border-2 border-transparent hover:border-primary/30 transition-colors cursor-grab active:cursor-grabbing">
         <img
@@ -139,18 +183,18 @@ export function CanvasCard({
         </div>
       </div>
 
-      {/* Context menu */}
+      {/* Context menu - Remove button */}
       {showContext && (
-        <div className="absolute top-full left-0 mt-1 bg-white rounded-md shadow-lg border p-1 z-50">
+        <div className="absolute top-full left-0 mt-1 bg-white rounded-md shadow-lg border p-1 z-50 min-w-[100px]">
           <button
-            className="w-full text-left px-3 py-1.5 text-sm hover:bg-muted rounded-sm text-destructive"
+            className="w-full text-left px-3 py-1.5 text-sm hover:bg-muted rounded-sm text-destructive flex items-center gap-2"
             onClick={(e) => {
               e.stopPropagation();
               onRemove(card.id);
               setShowContext(false);
             }}
           >
-            Kaldır
+            <span>Kaldır</span>
           </button>
         </div>
       )}

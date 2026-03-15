@@ -64,6 +64,26 @@ export function registerCanvasHandlers(
     }
   );
 
+  // Scale a card
+  socket.on(
+    "card:scale",
+    (data: { id: string; scale: number }) => {
+      const state = roomCanvasStates.get(roomId);
+      if (!state) return;
+
+      const card = state.get(data.id);
+      if (card) {
+        card.scale = data.scale;
+        socket.to(roomId).emit("card:scaled", {
+          id: data.id,
+          scale: data.scale,
+          userId,
+        });
+        debouncedSave(roomId);
+      }
+    }
+  );
+
   // Add a card to canvas
   socket.on(
     "card:add",

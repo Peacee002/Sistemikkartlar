@@ -86,6 +86,17 @@ export const useCanvasStore = create<CanvasStore>((set, get) => ({
     });
   },
 
+  scaleCard: (id, scale) => {
+    set((state) => {
+      const cards = new Map(state.cards);
+      const card = cards.get(id);
+      if (card) {
+        cards.set(id, { ...card, scale });
+      }
+      return { cards };
+    });
+  },
+
   bringToFront: (id) => {
     set((state) => {
       const cards = new Map(state.cards);
