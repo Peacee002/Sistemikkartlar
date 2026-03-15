@@ -116,9 +116,11 @@ export function useCanvas(socket: Socket | null) {
   const emitRemove = useCallback(
     (id: string) => {
       if (!socket) return;
+      // Optimistic update
+      removeCard(id);
       socket.emit("card:remove", { id });
     },
-    [socket]
+    [socket, removeCard]
   );
 
   const emitBringToFront = useCallback(

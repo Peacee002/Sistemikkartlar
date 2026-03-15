@@ -67,14 +67,33 @@ export function Canvas({
 
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
-      const { active, delta } = event;
+      const { active } = event;
       const data = active.data.current;
 
       if (data?.type === "pool-card" && canvasRef.current) {
         // Card dropped from pool onto canvas
-        const rect = canvasRef.current.getBoundingClientRect();
-        const x = Math.max(0, rect.width / 2 - 70 + delta.x);
-        const y = Math.max(0, rect.height / 2 - 70 + delta.y);
+        const canvasRect = canvasRef.current.getBoundingClientRect();
+        
+        // Calculate position relative to canvas using the final dragged position
+        // active.rect.current.translated contains the DOMRect of the item after dragging
+        const droppedRect = active.rect.current.translated;
+        
+        let x = 0;
+        let y = 0;
+
+        if (droppedRect) {
+          x = droppedRect.left - canvasRect.left;
+          y = droppedRect.top - canvasRect.top;
+        } else if (active.rect.current.initial) {
+          // Fallback calculation
+          x = active.rect.current.initial.left + event.delta.x - canvasRect.left;
+          y = active.rect.current.initial.top + event.delta.y - canvasRect.top;
+        }
+
+        // Ensure the card is dropped within the canvas bounds
+        // Card width is 140px, we want to keep it somewhat visible
+        x = Math.max(0, Math.min(x, canvasRect.width - 50));
+        y = Math.max(0, Math.min(y, canvasRect.height - 50));
 
         // Optimistic local update: show card immediately
         const poolCard = poolCards.find((c) => c.id === data.cardId);
