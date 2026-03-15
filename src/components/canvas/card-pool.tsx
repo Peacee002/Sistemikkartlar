@@ -38,27 +38,12 @@ export function CardPool({
   );
 }
 
-function DraggablePoolCard({ card }: { card: PoolCard }) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useDraggable({
-      id: `pool-${card.id}`,
-      data: { cardId: card.id, type: "pool-card" },
-    });
-
-  const style = transform
-    ? {
-        transform: `translate(${transform.x}px, ${transform.y}px)`,
-        opacity: isDragging ? 0.5 : 1,
-      }
-    : undefined;
-
+export function PoolCardItem({ card, isOverlay = false }: { card: PoolCard, isOverlay?: boolean }) {
   return (
     <div
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
-      style={style}
-      className="flex items-center gap-2 p-2 bg-card rounded-md border cursor-grab active:cursor-grabbing hover:bg-muted/50 transition-colors"
+      className={`flex items-center gap-2 p-2 bg-card rounded-md border ${
+        isOverlay ? "shadow-xl cursor-grabbing scale-105" : "cursor-grab hover:bg-muted/50"
+      } transition-all`}
     >
       <img
         src={card.imageUrl}
@@ -72,6 +57,29 @@ function DraggablePoolCard({ card }: { card: PoolCard }) {
           {card.category}
         </Badge>
       </div>
+    </div>
+  );
+}
+
+function DraggablePoolCard({ card }: { card: PoolCard }) {
+  const { attributes, listeners, setNodeRef, isDragging } =
+    useDraggable({
+      id: `pool-${card.id}`,
+      data: { cardId: card.id, type: "pool-card" },
+    });
+
+  const style = {
+    opacity: isDragging ? 0.3 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      style={style}
+    >
+      <PoolCardItem card={card} />
     </div>
   );
 }

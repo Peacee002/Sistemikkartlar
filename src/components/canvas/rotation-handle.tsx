@@ -35,9 +35,17 @@ export function RotationHandle({
       const centerX = rect.left + rect.width / 2;
       const centerY = rect.top + rect.height / 2;
 
-      const angle =
+      let angle =
         Math.atan2(e.clientY - centerY, e.clientX - centerX) *
         (180 / Math.PI) + 90;
+
+      // Snap to 15 degrees by default for easier alignment
+      // Snap to 45 degrees if Shift is held
+      if (e.shiftKey) {
+        angle = Math.round(angle / 45) * 45;
+      } else {
+        angle = Math.round(angle / 15) * 15;
+      }
 
       onRotate(angle);
     },
@@ -54,20 +62,22 @@ export function RotationHandle({
 
   return (
     <div
-      className="absolute -top-4 left-1/2 -translate-x-1/2 w-6 h-6 bg-primary rounded-full cursor-grab active:cursor-grabbing flex items-center justify-center shadow-md z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+      className="absolute -top-8 left-1/2 -translate-x-1/2 w-8 h-8 bg-white border-2 border-primary rounded-full cursor-grab active:cursor-grabbing flex items-center justify-center shadow-md z-10 transition-transform hover:scale-110"
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
+      title="Döndürmek için sürükleyin (Shift ile 45°)"
     >
       <svg
-        width="14"
-        height="14"
+        width="16"
+        height="16"
         viewBox="0 0 24 24"
         fill="none"
-        stroke="white"
+        stroke="currentColor"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
+        className="text-primary"
       >
         <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3" />
       </svg>

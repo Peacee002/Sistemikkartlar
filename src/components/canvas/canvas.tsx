@@ -1,10 +1,10 @@
 "use client";
 
-import { useCallback, useMemo, useRef } from "react";
-import { DndContext, DragEndEvent, DragOverlay } from "@dnd-kit/core";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, useSensor, useSensors, PointerSensor } from "@dnd-kit/core";
 import { useCanvasStore } from "@/stores/canvas-store";
 import { CanvasCard } from "./canvas-card";
-import { CardPool } from "./card-pool";
+import { CardPool, PoolCardItem } from "./card-pool";
 import { CursorOverlay } from "./cursor-overlay";
 import type { CanvasCardState } from "@/types";
 
@@ -42,6 +42,15 @@ export function Canvas({
   const cards = useCanvasStore((s) => s.cards);
   const addCard = useCanvasStore((s) => s.addCard);
   const zCounter = useCanvasStore((s) => s.zCounter);
+  const [activeDragItem, setActiveDragItem] = useState<PoolCard | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    })
+  );
 
   const onCanvasCards = useMemo(() => {
     const result: CanvasCardState[] = [];
@@ -65,36 +74,58 @@ export function Canvas({
     [onCursorMove]
   );
 
+  const handleDragStart = useCallback((event: DragStartEvent) => {
+    const { active } = event;
+    const data = active.data.current;
+    
+    if (data?.type === "pool-card") {
+      const card = poolCards.find((c) => c.id === data.cardId);
+      if (card) {
+        setActiveDragItem(card);
+      }
+    }
+  }, [poolCards]);
+
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
       const { active } = event;
       const data = active.data.current;
+      setActiveDragItem(null);
 
       if (data?.type === "pool-card" && canvasRef.current) {
         // Card dropped from pool onto canvas
         const canvasRect = canvasRef.current.getBoundingClientRect();
         
-        // Calculate position relative to canvas using the final dragged position
-        // active.rect.current.translated contains the DOMRect of the item after dragging
+        // active.rect.current.translated contains the DOMRect of the item after dragging (overlay position)
         const droppedRect = active.rect.current.translated;
         
-        let x = 0;
-        let y = 0;
+        if (!droppedRect) return;
 
-        if (droppedRect) {
-          x = droppedRect.left - canvasRect.left;
-          y = droppedRect.top - canvasRect.top;
-        } else if (active.rect.current.initial) {
-          // Fallback calculation
-          x = active.rect.current.initial.left + event.delta.x - canvasRect.left;
-          y = active.rect.current.initial.top + event.delta.y - canvasRect.top;
-        }
+        let x = droppedRect.left - canvasRect.left;
+        let y = droppedRect.top - canvasRect.top;
 
         // Ensure the card is dropped within the canvas bounds
         // Card width is 140px, we want to keep it somewhat visible
-        x = Math.max(0, Math.min(x, canvasRect.width - 50));
-        y = Math.max(0, Math.min(y, canvasRect.height - 50));
+        // However, allow dropping partially outside but snap to edge if too far?
+        // Let's just allow it for now, but keep it reachable.
+        // Actually, if dropped outside canvas (e.g. back to pool), we should probably cancel?
+        // But the user might want to drop it near the edge.
+        // Let's check if it's generally over the canvas.
+        
+        // Simple check: if top-left is wildly outside
+        if (
+             droppedRect.left > canvasRect.right || 
+             droppedRect.right < canvasRect.left || 
+             droppedRect.top > canvasRect.bottom || 
+             droppedRect.bottom < canvasRect.top
+        ) {
+             // Dropped outside canvas
+             return;
+        }
 
+        // Adjust coordinates to be relative to canvas content
+        // Note: Canvas might have scroll or zoom in future, but for now it's simple div.
+        
         // Optimistic local update: show card immediately
         const poolCard = poolCards.find((c) => c.id === data.cardId);
         if (poolCard) {
@@ -120,7 +151,11 @@ export function Canvas({
   );
 
   return (
-    <DndContext onDragEnd={handleDragEnd}>
+    <DndContext 
+      sensors={sensors}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
       <div className="flex h-full">
         {/* Canvas area */}
         <div
@@ -177,7 +212,13 @@ export function Canvas({
         <CardPool cards={poolCards} onCanvasCardIds={onCanvasCardIds} />
       </div>
 
-      <DragOverlay />
+      <DragOverlay>
+        {activeDragItem ? (
+          <div className="w-52">
+             <PoolCardItem card={activeDragItem} isOverlay />
+          </div>
+        ) : null}
+      </DragOverlay>
     </DndContext>
   );
 }
