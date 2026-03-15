@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, useEffect } from "react";
 import { RotationHandle } from "./rotation-handle";
 import type { CanvasCardState } from "@/types";
 
@@ -21,9 +21,16 @@ export function CanvasCard({
 }: CanvasCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
+  const isRotating = useRef(false);
   const dragOffset = useRef({ x: 0, y: 0 });
   const [localRotation, setLocalRotation] = useState(card.rotation);
   const [showContext, setShowContext] = useState(false);
+
+  useEffect(() => {
+    if (!isRotating.current) {
+      setLocalRotation(card.rotation);
+    }
+  }, [card.rotation]);
 
   const handlePointerDown = useCallback(
     (e: React.PointerEvent) => {
@@ -69,12 +76,17 @@ export function CanvasCard({
     dragging.current = false;
   }, []);
 
+  const handleRotateStart = useCallback(() => {
+    isRotating.current = true;
+  }, []);
+
   const handleRotate = useCallback((rotation: number) => {
     setLocalRotation(rotation);
   }, []);
 
   const handleRotateEnd = useCallback(
     (rotation: number) => {
+      isRotating.current = false;
       onRotate(card.id, rotation);
     },
     [card.id, onRotate]
@@ -89,10 +101,7 @@ export function CanvasCard({
     []
   );
 
-  const displayRotation =
-    localRotation !== card.rotation && !dragging.current
-      ? card.rotation
-      : localRotation;
+  const displayRotation = localRotation;
 
   return (
     <div
@@ -114,6 +123,7 @@ export function CanvasCard({
           rotation={displayRotation}
           onRotate={handleRotate}
           onRotateEnd={handleRotateEnd}
+          onRotateStart={handleRotateStart}
         />
       </div>
 

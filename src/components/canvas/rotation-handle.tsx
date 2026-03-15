@@ -7,6 +7,7 @@ type RotationHandleProps = {
   rotation: number;
   onRotate: (rotation: number) => void;
   onRotateEnd: (rotation: number) => void;
+  onRotateStart?: () => void;
 };
 
 export function RotationHandle({
@@ -14,6 +15,7 @@ export function RotationHandle({
   rotation,
   onRotate,
   onRotateEnd,
+  onRotateStart,
 }: RotationHandleProps) {
   const rotating = useRef(false);
 
@@ -22,9 +24,10 @@ export function RotationHandle({
       e.stopPropagation();
       e.preventDefault();
       rotating.current = true;
+      onRotateStart?.();
       (e.target as HTMLElement).setPointerCapture(e.pointerId);
     },
-    []
+    [onRotateStart]
   );
 
   const handlePointerMove = useCallback(
