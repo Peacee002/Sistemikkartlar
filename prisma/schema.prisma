@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  USER
+}
+
+model User {
+  id           String       @id @default(cuid())
+  email        String       @unique
+  name         String
+  passwordHash String
+  role         Role         @default(USER)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  rooms        Room[]       @relation("RoomCreator")
+  memberships  RoomMember[]
+}
+
+model Card {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  imageUrl    String
+  imageKey    String
+  category    String     @default("Genel")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  roomCards    RoomCard[]
+  canvasCards  CanvasCard[]
+}
+
+model Room {
+  id          String       @id @default(cuid())
+  name        String
+  description String?
+  inviteCode  String       @unique @default(cuid())
+  isActive    Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  creatorId   String
+  creator     User         @relation("RoomCreator", fields: [creatorId], references: [id])
+
+  members     RoomMember[]
+  roomCards   RoomCard[]
+  canvasCards CanvasCard[]
+}
+
+model RoomMember {
+  userId    String
+  roomId    String
+  joinedAt  DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roomId])
+}
+
+model RoomCard {
+  roomId    String
+  cardId    String
+  addedAt   DateTime @default(now())
+
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  card      Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@id([roomId, cardId])
+}
+
+model CanvasCard {
+  id        String   @id @default(cuid())
+  roomId    String
+  cardId    String
+  x         Float    @default(0)
+  y         Float    @default(0)
+  rotation  Float    @default(0)
+  zIndex    Int      @default(0)
+  scale     Float    @default(1)
+  isOnCanvas Boolean @default(true)
+  placedBy  String?
+
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  card      Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, cardId])
+}

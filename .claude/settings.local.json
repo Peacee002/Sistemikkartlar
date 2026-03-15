@@ -4,7 +4,14 @@
       "Bash(cd /c/Users/peace/Documents/WebProjects/SistemikkartlarWeb && npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --turbopack --yes 2>&1)",
       "Bash(cp:*)",
       "Bash(tail:*)",
-      "Bash(cd /c/Users/peace/Documents/WebProjects/SistemikkartlarWeb && npx shadcn@latest init -d --yes 2>&1)"
+      "Bash(cd /c/Users/peace/Documents/WebProjects/SistemikkartlarWeb && npx shadcn@latest init -d --yes 2>&1)",
+      "Bash(cd /c/Users/peace/Documents/WebProjects/SistemikkartlarWeb && npx prisma init 2>&1)",
+      "Bash(cd /c/Users/peace/Documents/WebProjects/SistemikkartlarWeb && npx prisma generate 2>&1)",
+      "Bash(head:*)",
+      "Bash(cd /c/Users/peace/Documents/WebProjects/SistemikkartlarWeb && npx shadcn@latest add input label card dialog dropdown-menu avatar badge separator sheet textarea select checkbox -y --overwrite 2>&1)",
+      "Bash(cd /c/Users/peace/Documents/WebProjects/SistemikkartlarWeb && node -e \"const p = require\\('@prisma/client'\\); console.log\\(Object.keys\\(p\\)\\)\" 2>&1)",
+      "Bash(cd /c/Users/peace/Documents/WebProjects/SistemikkartlarWeb && node -e \"const {PrismaClient} = require\\('@prisma/client'\\); const p = new PrismaClient\\(\\); console.log\\('ok'\\)\" 2>&1)",
+      "Bash(cd /c/Users/peace/Documents/WebProjects/SistemikkartlarWeb && rm -f prisma.config.ts && npx prisma generate 2>&1)"
     ]
   }
 }
