@@ -38,7 +38,7 @@ export function CardPool({
             Kartlar ({availableCards.length})
           </div>
           <div className="flex-1 overflow-y-auto p-3">
-            <div className="grid grid-cols-4 gap-3">
+            <div className="flex flex-wrap gap-3">
               {availableCards.map((card) => (
                 <DraggablePoolCard key={card.id} card={card} />
               ))}
@@ -89,6 +89,7 @@ function DraggablePoolCard({ card }: { card: PoolCard }) {
       {...listeners}
       {...attributes}
       style={style}
+      className="w-40"
     >
       <PoolCardItem card={card} />
     </div>
