@@ -171,7 +171,7 @@ export function CanvasCard({
         </>
       )}
 
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden border-2 border-transparent hover:border-primary/30 transition-colors cursor-grab active:cursor-grabbing">
+      <div className="bg-card rounded-lg shadow-[0_2px_8px_rgba(44,44,44,0.12)] overflow-hidden border-2 border-transparent hover:border-primary/30 transition-colors cursor-grab active:cursor-grabbing">
         <img
           src={card.card.imageUrl}
           alt={card.card.title}
@@ -185,7 +185,7 @@ export function CanvasCard({
 
       {/* Context menu - Remove button */}
       {showContext && (
-        <div className="absolute top-full left-0 mt-1 bg-white rounded-md shadow-lg border p-1 z-50 min-w-[100px]">
+        <div className="absolute top-full left-0 mt-1 bg-popover rounded-md shadow-lg border border-border p-1 z-50 min-w-[100px]">
           <button
             className="w-full text-left px-3 py-1.5 text-sm hover:bg-muted rounded-sm text-destructive flex items-center gap-2"
             onClick={(e) => {

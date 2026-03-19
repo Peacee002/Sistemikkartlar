@@ -37,37 +37,56 @@ export function SignupForm() {
       return;
     }
 
-    const res = await fetch("/api/kayit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, name, password }),
-    });
+    try {
+      const res = await fetch("/api/kayit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, name, password }),
+      });
 
-    const data = await res.json();
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (err) {
+        console.error("Sunucudan JSON formatında olmayan bir yanıt geldi:", text);
+        setError("Sunucu hatası: Lütfen daha sonra tekrar deneyin.");
+        setLoading(false);
+        return;
+      }
 
-    if (!res.ok) {
-      setError(data.error);
+      if (!res.ok) {
+        setError(data.error || "Kayıt sırasında bir hata oluştu");
+        setLoading(false);
+        return;
+      }
+
+      // Auto sign in after registration
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError("Kayıt başarılı, ancak giriş yapılamadı. Lütfen giriş yapmayı deneyin.");
+        setLoading(false);
+      } else {
+        router.push("/");
+        router.refresh();
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.");
       setLoading(false);
-      return;
-    }
-
-    // Auto sign in after registration
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
-
-    if (result?.error) {
-      setError("Kayıt başarılı, giriş yapılamadı");
-      setLoading(false);
-    } else {
-      router.push("/");
-      router.refresh();
     }
   }
 
   return (
+    <>
+    <div className="text-center mb-6">
+      <h1 className="text-2xl font-bold text-primary">Sistemik Kartlar</h1>
+    </div>
     <Card>
       <CardHeader>
         <CardTitle className="text-2xl">Kayıt Ol</CardTitle>
@@ -135,5 +154,6 @@ export function SignupForm() {
         </form>
       </CardContent>
     </Card>
+    </>
   );
 }

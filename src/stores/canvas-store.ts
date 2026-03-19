@@ -11,6 +11,7 @@ type CanvasStore = {
   removeCard: (id: string) => void;
   moveCard: (id: string, x: number, y: number) => void;
   rotateCard: (id: string, rotation: number) => void;
+  scaleCard: (id: string, scale: number) => void;
   bringToFront: (id: string) => void;
   setZIndex: (id: string, zIndex: number) => void;
   updateCursor: (cursor: CursorState) => void;

@@ -24,7 +24,7 @@ type RoomCardProps = {
 export function RoomCard({ room }: RoomCardProps) {
   return (
     <Link href={`/odalar/${room.id}`}>
-      <Card className="hover:shadow-md transition-shadow cursor-pointer">
+      <Card className="hover:shadow-md hover:-translate-y-0.5 hover:shadow-primary/5 transition-all cursor-pointer">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg">{room.name}</CardTitle>

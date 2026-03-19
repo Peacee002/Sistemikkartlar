@@ -162,7 +162,7 @@ export function Canvas({
         {/* Canvas area */}
         <div
           ref={canvasRef}
-          className="flex-1 relative overflow-hidden bg-muted/30"
+          className="flex-1 relative overflow-hidden bg-gradient-to-br from-muted/20 to-muted/40"
           onPointerMove={handlePointerMove}
           style={{ touchAction: "none" }}
         >
@@ -171,13 +171,13 @@ export function Canvas({
             <div
               className={`flex items-center gap-1.5 px-2 py-1 rounded-full text-xs ${
                 connected
-                  ? "bg-green-100 text-green-700"
+                  ? "bg-primary/10 text-primary"
                   : "bg-red-100 text-red-700"
               }`}
             >
               <div
                 className={`w-2 h-2 rounded-full ${
-                  connected ? "bg-green-500" : "bg-red-500"
+                  connected ? "bg-primary" : "bg-red-500"
                 }`}
               />
               {connected ? "Bağlı" : "Bağlantı kesik"}
@@ -189,7 +189,7 @@ export function Canvas({
             className="absolute inset-0 pointer-events-none"
             style={{
               backgroundImage:
-                "radial-gradient(circle, #d1d5db 1px, transparent 1px)",
+                "radial-gradient(circle, oklch(0.78 0.02 75) 1px, transparent 1px)",
               backgroundSize: "24px 24px",
             }}
           />

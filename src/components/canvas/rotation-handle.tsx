@@ -65,7 +65,7 @@ export function RotationHandle({
 
   return (
     <div
-      className="absolute -top-8 left-1/2 -translate-x-1/2 w-8 h-8 bg-white border-2 border-primary rounded-full cursor-grab active:cursor-grabbing flex items-center justify-center shadow-md z-10 transition-transform hover:scale-110"
+      className="absolute -top-8 left-1/2 -translate-x-1/2 w-8 h-8 bg-card border-2 border-primary rounded-full cursor-grab active:cursor-grabbing flex items-center justify-center shadow-md z-10 transition-transform hover:scale-110"
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}

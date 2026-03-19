@@ -11,6 +11,7 @@ export default auth((req) => {
     pathname.startsWith("/giris") ||
     pathname.startsWith("/kayit") ||
     pathname.startsWith("/api/auth") ||
+    pathname.startsWith("/api/kayit") ||
     pathname.startsWith("/api/uploadthing") ||
     pathname.startsWith("/_next")
   ) {
@@ -19,6 +20,9 @@ export default auth((req) => {
 
   // Must be authenticated for everything else
   if (!user) {
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const loginUrl = new URL("/giris", req.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);

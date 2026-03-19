@@ -16,7 +16,7 @@ export function Navbar() {
   const { data: session } = useSession();
 
   return (
-    <header className="border-b bg-background">
+    <header className="bg-primary text-primary-foreground shadow-sm">
       <div className="container mx-auto flex h-14 items-center justify-between px-4">
         <Link href="/" className="font-bold text-lg">
           Sistemik Kartlar
@@ -28,14 +28,14 @@ export function Navbar() {
               {(session.user.role === "ADMIN" ||
                 session.user.role === "TEACHER") && (
                 <Link href="/odalar">
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
                     Odalar
                   </Button>
                 </Link>
               )}
               {session.user.role === "ADMIN" && (
                 <Link href="/panel/kartlar">
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
                     Yönetim
                   </Button>
                 </Link>
@@ -45,12 +45,12 @@ export function Navbar() {
                   render={
                     <Button
                       variant="ghost"
-                      className="relative h-8 w-8 rounded-full"
+                      className="relative h-8 w-8 rounded-full hover:bg-primary-foreground/10"
                     />
                   }
                 >
                   <Avatar className="h-8 w-8">
-                    <AvatarFallback>
+                    <AvatarFallback className="bg-primary-foreground/20 text-primary-foreground">
                       {session.user.name?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
@@ -76,12 +76,14 @@ export function Navbar() {
           ) : (
             <div className="flex gap-2">
               <Link href="/giris">
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
                   Giriş Yap
                 </Button>
               </Link>
               <Link href="/kayit">
-                <Button size="sm">Kayıt Ol</Button>
+                <Button size="sm" className="bg-primary-foreground text-primary hover:bg-primary-foreground/90">
+                  Kayıt Ol
+                </Button>
               </Link>
             </div>
           )}

@@ -29,22 +29,32 @@ export function LoginForm() {
 
     const formData = new FormData(e.currentTarget);
 
-    const result = await signIn("credentials", {
-      email: formData.get("email"),
-      password: formData.get("password"),
-      redirect: false,
-    });
+    try {
+      const result = await signIn("credentials", {
+        email: formData.get("email"),
+        password: formData.get("password"),
+        redirect: false,
+      });
 
-    if (result?.error) {
-      setError("Email veya şifre hatalı");
+      if (result?.error) {
+        setError("Email veya şifre hatalı");
+        setLoading(false);
+      } else {
+        router.push(callbackUrl);
+        router.refresh();
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.");
       setLoading(false);
-    } else {
-      router.push(callbackUrl);
-      router.refresh();
     }
   }
 
   return (
+    <>
+    <div className="text-center mb-6">
+      <h1 className="text-2xl font-bold text-primary">Sistemik Kartlar</h1>
+    </div>
     <Card>
       <CardHeader>
         <CardTitle className="text-2xl">Giriş Yap</CardTitle>
@@ -91,5 +101,6 @@ export function LoginForm() {
         </form>
       </CardContent>
     </Card>
+    </>
   );
 }
