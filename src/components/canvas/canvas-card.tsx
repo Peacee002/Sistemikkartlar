@@ -141,7 +141,7 @@ export function CanvasCard({
       style={{
         transform: `translate(${card.x}px, ${card.y}px) rotate(${displayRotation}deg) scale(${displayScale})`,
         zIndex: card.zIndex,
-        width: "140px",
+        width: "200px",
       }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
@@ -178,9 +178,6 @@ export function CanvasCard({
           className="w-full aspect-square object-cover pointer-events-none"
           draggable={false}
         />
-        <div className="p-1.5 text-center">
-          <p className="text-xs font-medium truncate">{card.card.title}</p>
-        </div>
       </div>
 
       {/* Context menu - Remove button */}

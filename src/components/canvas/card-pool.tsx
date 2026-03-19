@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { useDraggable } from "@dnd-kit/core";
-import { Badge } from "@/components/ui/badge";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type PoolCard = {
   id: string;
@@ -17,23 +18,39 @@ export function CardPool({
   cards: PoolCard[];
   onCanvasCardIds: Set<string>;
 }) {
+  const [isOpen, setIsOpen] = useState(false);
   const availableCards = cards.filter((c) => !onCanvasCardIds.has(c.id));
 
   return (
-    <div className="w-64 bg-background border-l flex flex-col h-full">
-      <div className="p-3 border-b font-semibold text-sm">
-        Kartlar ({availableCards.length})
-      </div>
-      <div className="flex-1 overflow-y-auto p-2 space-y-2">
-        {availableCards.map((card) => (
-          <DraggablePoolCard key={card.id} card={card} />
-        ))}
-        {availableCards.length === 0 && (
-          <p className="text-xs text-muted-foreground text-center py-4">
-            Tüm kartlar tuval üzerinde
-          </p>
-        )}
-      </div>
+    <div className="relative flex h-full">
+      {/* Toggle button */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="absolute -left-8 top-1/2 -translate-y-1/2 z-10 w-8 h-16 bg-background border border-r-0 rounded-l-md flex items-center justify-center hover:bg-muted transition-colors"
+      >
+        {isOpen ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+      </button>
+
+      {/* Panel */}
+      {isOpen && (
+        <div className="w-96 bg-background border-l flex flex-col h-full">
+          <div className="p-3 border-b font-semibold text-sm">
+            Kartlar ({availableCards.length})
+          </div>
+          <div className="flex-1 overflow-y-auto p-3">
+            <div className="grid grid-cols-2 gap-3">
+              {availableCards.map((card) => (
+                <DraggablePoolCard key={card.id} card={card} />
+              ))}
+            </div>
+            {availableCards.length === 0 && (
+              <p className="text-xs text-muted-foreground text-center py-4">
+                Tüm kartlar tuval üzerinde
+              </p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -41,22 +58,16 @@ export function CardPool({
 export function PoolCardItem({ card, isOverlay = false }: { card: PoolCard, isOverlay?: boolean }) {
   return (
     <div
-      className={`flex items-center gap-2 p-2 bg-card rounded-md border ${
+      className={`bg-card rounded-lg border overflow-hidden ${
         isOverlay ? "shadow-xl cursor-grabbing scale-105" : "cursor-grab hover:bg-muted/50"
       } transition-all`}
     >
       <img
         src={card.imageUrl}
         alt={card.title}
-        className="w-10 h-10 rounded object-cover flex-shrink-0"
+        className="w-full aspect-square object-cover"
         draggable={false}
       />
-      <div className="min-w-0 flex-1">
-        <p className="text-xs font-medium truncate">{card.title}</p>
-        <Badge variant="secondary" className="text-[10px] mt-0.5">
-          {card.category}
-        </Badge>
-      </div>
     </div>
   );
 }

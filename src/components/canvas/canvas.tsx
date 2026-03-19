@@ -107,7 +107,7 @@ export function Canvas({
         let y = droppedRect.top - canvasRect.top;
 
         // Ensure the card is dropped within the canvas bounds
-        // Card width is 140px, we want to keep it somewhat visible
+        // Card width is 200px, we want to keep it somewhat visible
         // However, allow dropping partially outside but snap to edge if too far?
         // Let's just allow it for now, but keep it reachable.
         // Actually, if dropped outside canvas (e.g. back to pool), we should probably cancel?
@@ -217,7 +217,7 @@ export function Canvas({
 
       <DragOverlay>
         {activeDragItem ? (
-          <div className="w-52">
+          <div className="w-40">
              <PoolCardItem card={activeDragItem} isOverlay />
           </div>
         ) : null}
