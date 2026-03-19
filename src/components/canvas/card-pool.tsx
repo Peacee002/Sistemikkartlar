@@ -33,12 +33,12 @@ export function CardPool({
 
       {/* Panel */}
       {isOpen && (
-        <div className="w-96 bg-background border-l flex flex-col h-full">
+        <div className="w-[80vw] bg-background border-l flex flex-col h-full">
           <div className="p-3 border-b font-semibold text-sm">
             Kartlar ({availableCards.length})
           </div>
           <div className="flex-1 overflow-y-auto p-3">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-4 gap-3">
               {availableCards.map((card) => (
                 <DraggablePoolCard key={card.id} card={card} />
               ))}
