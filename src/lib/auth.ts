@@ -52,7 +52,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           };
         } catch (error) {
           console.error("Auth error:", error);
-          return null;
+          throw new Error("Veritabanı bağlantı hatası: Veritabanı uykuda veya ulaşılamıyor. Lütfen Neon panelinden veritabanını uyandırın.");
         }
       },
     }),

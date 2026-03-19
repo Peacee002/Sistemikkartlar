@@ -37,7 +37,11 @@ export function LoginForm() {
       });
 
       if (result?.error) {
-        setError("Email veya şifre hatalı");
+        if (result.error === "CredentialsSignin") {
+          setError("Email veya şifre hatalı");
+        } else {
+          setError("Veritabanına bağlanılamadı. Veritabanı uykuda olabilir (Neon'dan uyandırın).");
+        }
         setLoading(false);
       } else {
         router.push(callbackUrl);
