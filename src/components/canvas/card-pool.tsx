@@ -65,7 +65,7 @@ export function PoolCardItem({ card, isOverlay = false }: { card: PoolCard, isOv
       <img
         src={card.imageUrl}
         alt={card.title}
-        className="w-full aspect-square object-cover"
+        className="w-full aspect-auto object-contain"
         draggable={false}
       />
     </div>
