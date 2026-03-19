@@ -171,11 +171,11 @@ export function CanvasCard({
         </>
       )}
 
-      <div className="bg-card rounded-lg shadow-[0_2px_8px_rgba(44,44,44,0.12)] overflow-hidden border-2 border-transparent hover:border-primary/30 transition-colors cursor-grab active:cursor-grabbing">
+      <div className="bg-card rounded-lg shadow-[0_2px_8px_rgba(44,44,44,0.12)] border-2 border-transparent hover:border-primary/30 transition-colors cursor-grab active:cursor-grabbing">
         <img
           src={card.card.imageUrl}
           alt={card.card.title}
-          className="w-full aspect-square object-cover pointer-events-none"
+          className="w-full h-auto rounded-lg pointer-events-none"
           draggable={false}
         />
       </div>

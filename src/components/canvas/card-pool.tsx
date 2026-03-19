@@ -58,14 +58,14 @@ export function CardPool({
 export function PoolCardItem({ card, isOverlay = false }: { card: PoolCard, isOverlay?: boolean }) {
   return (
     <div
-      className={`bg-card rounded-lg border overflow-hidden ${
+      className={`bg-card rounded-lg border ${
         isOverlay ? "shadow-xl cursor-grabbing scale-105" : "cursor-grab hover:bg-muted/50"
       } transition-all`}
     >
       <img
         src={card.imageUrl}
         alt={card.title}
-        className="w-full aspect-auto object-contain"
+        className="w-full h-auto rounded-lg"
         draggable={false}
       />
     </div>
