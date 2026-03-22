@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useDraggable } from "@dnd-kit/core";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronUp, ChevronDown } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type PoolCard = {
   id: string;
@@ -18,9 +19,45 @@ export function CardPool({
   cards: PoolCard[];
   onCanvasCardIds: Set<string>;
 }) {
+  const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(false);
   const availableCards = cards.filter((c) => !onCanvasCardIds.has(c.id));
 
+  if (isMobile) {
+    return (
+      <div className="flex-shrink-0 border-t bg-background">
+        {/* Toggle bar */}
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-full h-10 flex items-center justify-center gap-2 text-sm font-medium hover:bg-muted transition-colors"
+        >
+          {isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
+          Kartlar ({availableCards.length})
+        </button>
+
+        {/* Expandable card area */}
+        <div
+          className="overflow-hidden transition-all duration-200"
+          style={{ height: isOpen ? "35vh" : 0 }}
+        >
+          <div className="h-full overflow-y-auto p-3">
+            <div className="flex flex-wrap gap-2">
+              {availableCards.map((card) => (
+                <DraggablePoolCard key={card.id} card={card} small />
+              ))}
+            </div>
+            {availableCards.length === 0 && (
+              <p className="text-xs text-muted-foreground text-center py-4">
+                Tüm kartlar tuval üzerinde
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop: side panel
   return (
     <div className="relative flex h-full">
       {/* Toggle button */}
@@ -33,7 +70,7 @@ export function CardPool({
 
       {/* Panel */}
       {isOpen && (
-        <div className="w-[80vw] bg-background border-l flex flex-col h-full">
+        <div className="w-72 lg:w-80 bg-background border-l flex flex-col h-full">
           <div className="p-3 border-b font-semibold text-sm">
             Kartlar ({availableCards.length})
           </div>
@@ -72,7 +109,7 @@ export function PoolCardItem({ card, isOverlay = false }: { card: PoolCard, isOv
   );
 }
 
-function DraggablePoolCard({ card }: { card: PoolCard }) {
+function DraggablePoolCard({ card, small = false }: { card: PoolCard; small?: boolean }) {
   const { attributes, listeners, setNodeRef, isDragging } =
     useDraggable({
       id: `pool-${card.id}`,
@@ -89,7 +126,7 @@ function DraggablePoolCard({ card }: { card: PoolCard }) {
       {...listeners}
       {...attributes}
       style={style}
-      className="w-40"
+      className={small ? "w-24" : "w-40"}
     >
       <PoolCardItem card={card} />
     </div>

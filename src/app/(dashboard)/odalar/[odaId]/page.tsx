@@ -135,8 +135,8 @@ export default function RoomSettingsPage() {
 
   return (
     <div className="space-y-8 max-w-2xl">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{room.name}</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <h1 className="text-xl sm:text-2xl font-bold">{room.name}</h1>
         <Link href={`/oda/${room.id}`}>
           <Button>Odaya Git</Button>
         </Link>
@@ -166,20 +166,22 @@ export default function RoomSettingsPage() {
       {/* Invite link */}
       <section className="space-y-4">
         <h2 className="text-lg font-semibold">Davet Linki</h2>
-        <div className="flex gap-2">
-          <Input value={inviteLink} readOnly />
-          <Button
-            variant="outline"
-            onClick={() => {
-              navigator.clipboard.writeText(inviteLink);
-              toast.success("Link kopyalandı");
-            }}
-          >
-            Kopyala
-          </Button>
-          <Button variant="outline" onClick={handleRegenerateInvite}>
-            Yenile
-          </Button>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Input value={inviteLink} readOnly className="min-w-0" />
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                navigator.clipboard.writeText(inviteLink);
+                toast.success("Link kopyalandı");
+              }}
+            >
+              Kopyala
+            </Button>
+            <Button variant="outline" onClick={handleRegenerateInvite}>
+              Yenile
+            </Button>
+          </div>
         </div>
       </section>
 

@@ -158,7 +158,7 @@ export function Canvas({
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex h-full">
+      <div className="flex h-full flex-col md:flex-row">
         {/* Canvas area */}
         <div
           ref={canvasRef}
@@ -217,7 +217,7 @@ export function Canvas({
 
       <DragOverlay>
         {activeDragItem ? (
-          <div className="w-40">
+          <div className="w-32 md:w-40">
              <PoolCardItem card={activeDragItem} isOverlay />
           </div>
         ) : null}

@@ -147,18 +147,19 @@ export default function RoomCanvasPage() {
   return (
     <div className="h-screen flex flex-col">
       {/* Top bar */}
-      <header className="h-12 border-b bg-background flex items-center justify-between px-4 flex-shrink-0">
-        <div className="flex items-center gap-3">
+      <header className="h-auto min-h-12 border-b bg-background flex items-center justify-between px-2 sm:px-4 flex-shrink-0 flex-wrap py-1.5 sm:py-0 gap-1">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <Link href={isTeacherOrAdmin ? `/odalar/${roomId}` : "/"}>
-            <Button variant="ghost" size="sm">
-              ← Geri
+            <Button variant="ghost" size="sm" className="px-2 sm:px-3">
+              <span>←</span>
+              <span className="hidden sm:inline ml-1">Geri</span>
             </Button>
           </Link>
-          <span className="font-semibold text-sm">{room.name}</span>
+          <span className="font-semibold text-xs sm:text-sm truncate max-w-[120px] sm:max-w-none">{room.name}</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
           {onlineUsers.map((user) => (
-            <Badge key={user.userId} variant="outline" className="text-xs">
+            <Badge key={user.userId} variant="outline" className="text-[10px] sm:text-xs">
               {user.userName}
             </Badge>
           ))}

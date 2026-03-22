@@ -27,6 +27,7 @@ export function CanvasCard({
   const isRotating = useRef(false);
   const isResizing = useRef(false);
   const dragOffset = useRef({ x: 0, y: 0 });
+  const lastTapTime = useRef(0);
   const [localRotation, setLocalRotation] = useState(card.rotation);
   const [localScale, setLocalScale] = useState(card.scale || 1);
   const [showContext, setShowContext] = useState(false);
@@ -87,8 +88,19 @@ export function CanvasCard({
     [card.id, onMove]
   );
 
-  const handlePointerUp = useCallback(() => {
+  const handlePointerUp = useCallback((e: React.PointerEvent) => {
     dragging.current = false;
+
+    // Double-tap detection for touch devices
+    if (e.pointerType === "touch") {
+      const now = Date.now();
+      if (now - lastTapTime.current < 300) {
+        setShowContext((prev) => !prev);
+        lastTapTime.current = 0;
+      } else {
+        lastTapTime.current = now;
+      }
+    }
   }, []);
 
   const handleRotateStart = useCallback(() => {
