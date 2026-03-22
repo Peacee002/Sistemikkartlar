@@ -23,16 +23,26 @@ export function CardPool({
   const [isOpen, setIsOpen] = useState(false);
   const availableCards = cards.filter((c) => !onCanvasCardIds.has(c.id));
 
+  // Wait for client-side detection before rendering layout
+  if (isMobile === undefined) {
+    return null;
+  }
+
+  // Mobile: bottom drawer
   if (isMobile) {
     return (
-      <div className="flex-shrink-0 border-t bg-background">
+      <div className="flex-shrink-0 bg-background shadow-[0_-2px_8px_rgba(0,0,0,0.1)] z-10">
         {/* Toggle bar */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full h-10 flex items-center justify-center gap-2 text-sm font-medium hover:bg-muted transition-colors"
+          className="w-full flex flex-col items-center gap-1 py-2 hover:bg-muted/50 active:bg-muted transition-colors"
         >
-          {isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
-          Kartlar ({availableCards.length})
+          {/* Drag handle indicator */}
+          <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
+          <div className="flex items-center gap-2 text-sm font-medium">
+            {isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
+            Kartlar ({availableCards.length})
+          </div>
         </button>
 
         {/* Expandable card area */}
@@ -40,7 +50,7 @@ export function CardPool({
           className="overflow-hidden transition-all duration-200"
           style={{ height: isOpen ? "35vh" : 0 }}
         >
-          <div className="h-full overflow-y-auto p-3">
+          <div className="h-full overflow-y-auto p-3 border-t">
             <div className="flex flex-wrap gap-2">
               {availableCards.map((card) => (
                 <DraggablePoolCard key={card.id} card={card} small />

@@ -162,7 +162,7 @@ export function Canvas({
         {/* Canvas area */}
         <div
           ref={canvasRef}
-          className="flex-1 relative overflow-hidden bg-gradient-to-br from-muted/20 to-muted/40"
+          className="flex-1 min-h-0 relative overflow-hidden bg-gradient-to-br from-muted/20 to-muted/40"
           onPointerMove={handlePointerMove}
           style={{ touchAction: "none" }}
         >
